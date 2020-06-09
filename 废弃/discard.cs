@@ -27,7 +27,6 @@ namespace SmartStock
         //            GetInfo(ConfigurationSettings.AppSettings.GetValues("code" + (e.KeyValue - 96))[0].ToString());
         //        }
         //    }
-
         //}
 
         //protected override bool ProcessCmdKey(ref Message msg, Keys keyData)
