@@ -77,8 +77,8 @@ namespace SmartStock
                 string data = jObject.GetValue("data").ToString();
                 var trends = JObject.Parse(data).GetValue("trends").ToArray();
                 Console.WriteLine(trends[trends.Length - 1]);
-
-                string lastrecord = trends[trends.Length - 1].ToString().Split(',').Last();
+                string[] result = trends[trends.Length - 1].ToString().Split(',');
+                string lastrecord =result[4];
                 label1.Text = lastrecord;
                 //this.Opacity = 50;
                 //Thread.Sleep(2000);
