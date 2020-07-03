@@ -51,13 +51,17 @@ namespace SmartStock
             RegisterHotKey(this.Handle, 8883, 2, Keys.NumPad4);
             RegisterHotKey(this.Handle, 8884, 2, Keys.NumPad5);
             RegisterHotKey(this.Handle, 8885, 2, Keys.NumPad6);
-            GetInfo(ConfigurationSettings.AppSettings.GetValues("code1")[0].ToString());
+            GetInfo(ConfigurationSettings.AppSettings.GetValues("code0")[0].ToString());
         }
 
         public void GetInfo(string a_strCode)
         {
+            int ErrorTime = 0;
+            string strTag = "1";
+            Tag:
+
             string l_strURL =
-                $"http://push2.eastmoney.com/api/qt/stock/trends2/get?secid=1.{a_strCode}&fields1=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13&fields2=f51,f52,f53,f54,f55,f56,f57,f58&ut=e1e6871893c6386c5ff6967026016627&iscr=0&cb=cb_1591628037698_8038509&isqhquote=&cb_1591628037698_8038509=cb_1591628037698_8038509";
+                $"http://push2.eastmoney.com/api/qt/stock/trends2/get?secid={strTag}.{a_strCode}&fields1=f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13&fields2=f51,f52,f53,f54,f55,f56,f57,f58&ut=e1e6871893c6386c5ff6967026016627&iscr=0&cb=cb_1591628037698_8038509&isqhquote=&cb_1591628037698_8038509=cb_1591628037698_8038509";
             HttpClient httpClient = new HttpClient();
             StringContent stringContent = new StringContent("", Encoding.UTF8, "application/json");
             HttpResponseMessage httpResponseMessage = httpClient.PostAsync(l_strURL, stringContent).Result;
@@ -70,7 +74,16 @@ namespace SmartStock
             JObject jObject = JObject.Parse(l_strResult);
             if (jObject.GetValue("data") == null || string.IsNullOrWhiteSpace(jObject.GetValue("data").ToString()))
             {
-                label1.Text = "err";
+                if (ErrorTime > 0)
+                {
+                    label1.Text = "err";
+                }
+                else
+                {
+                    ErrorTime++;
+                    strTag = "0";
+                    goto Tag;
+                }
             }
             else
             {
@@ -78,7 +91,7 @@ namespace SmartStock
                 var trends = JObject.Parse(data).GetValue("trends").ToArray();
                 Console.WriteLine(trends[trends.Length - 1]);
                 string[] result = trends[trends.Length - 1].ToString().Split(',');
-                string lastrecord =result[4];
+                string lastrecord = result[4];
                 label1.Text = lastrecord;
                 //this.Opacity = 50;
                 //Thread.Sleep(2000);
