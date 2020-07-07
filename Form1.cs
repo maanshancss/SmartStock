@@ -19,12 +19,12 @@ namespace SmartStock
     {
         public Form1()
         {
+            this.Opacity = Int32.Parse(ConfigurationSettings.AppSettings.GetValues("opacity")[0].ToString());
             InitializeComponent();
             this.StartPosition = FormStartPosition.Manual;
 
             this.Location = new Point(Int32.Parse(ConfigurationSettings.AppSettings.GetValues("position_x")[0].ToString()),
                 Int32.Parse(ConfigurationSettings.AppSettings.GetValues("position_y")[0].ToString()));
-            this.Opacity = Int32.Parse(ConfigurationSettings.AppSettings.GetValues("opacity")[0].ToString());
         }
 
         Dictionary<string, string> m_dicCodeList = new Dictionary<string, string>();
