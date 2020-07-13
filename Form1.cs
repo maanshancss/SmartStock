@@ -23,6 +23,7 @@ namespace SmartStock
             InitializeComponent();
             this.StartPosition = FormStartPosition.Manual;
 
+            timer1.Interval = Int32.Parse(ConfigurationSettings.AppSettings.GetValues("timeInterval")[0].ToString()) * 1000;
             this.Location = new Point(Int32.Parse(ConfigurationSettings.AppSettings.GetValues("position_x")[0].ToString()),
                 Int32.Parse(ConfigurationSettings.AppSettings.GetValues("position_y")[0].ToString()));
         }
@@ -96,6 +97,11 @@ namespace SmartStock
                 //this.Opacity = 50;
                 //Thread.Sleep(2000);
                 //this.Opacity = 15;
+                //记录当前日志
+                ConfigurationSettings.AppSettings.Set("current", a_strCode);
+
+                //保存后需要刷新数据
+                ConfigurationManager.RefreshSection("appSettings");
             }
 
             Console.WriteLine(l_strResult);
@@ -140,6 +146,9 @@ namespace SmartStock
         // 响应热键
         protected override void WndProc(ref Message m)
         {
+            //快捷键获取数据前先刷新数据
+            ConfigurationManager.RefreshSection("appSettings");
+
             switch (m.Msg)
             {
                 case 0x0312: //这个是window消息定义的注册的热键消息     
@@ -182,6 +191,14 @@ namespace SmartStock
             }
 
             base.WndProc(ref m);
+        }
+
+        private void timer1_Tick(object sender, EventArgs e)
+        {
+            string current = ConfigurationSettings.AppSettings.GetValues("current")[0];
+            GetInfo(current);
+
+            timer1.Interval = Int32.Parse(ConfigurationSettings.AppSettings.GetValues("timeInterval")[0].ToString()) * 1000;
         }
     }
 }
