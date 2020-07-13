@@ -28,21 +28,21 @@ namespace SmartStock
                 Int32.Parse(ConfigurationSettings.AppSettings.GetValues("position_y")[0].ToString()));
         }
 
-        Dictionary<string, string> m_dicCodeList = new Dictionary<string, string>();
+        //Dictionary<string, string> m_dicCodeList = new Dictionary<string, string>();
 
         private void Form1_Load(object sender, EventArgs e)
         {
 
-            foreach (string code in ConfigurationSettings.AppSettings.AllKeys)
-            {
-                if (string.IsNullOrWhiteSpace(code)) continue;
-                if (code.StartsWith("code"))
-                {
-                    if (m_dicCodeList.ContainsKey(code))
-                        continue;
-                    m_dicCodeList.Add(code, ConfigurationSettings.AppSettings.GetValues(code)[0].ToString());
-                }
-            }
+            //foreach (string code in ConfigurationSettings.AppSettings.AllKeys)
+            //{
+            //    if (string.IsNullOrWhiteSpace(code)) continue;
+            //    if (code.StartsWith("code"))
+            //    {
+            //        if (m_dicCodeList.ContainsKey(code))
+            //            continue;
+            //        m_dicCodeList.Add(code, ConfigurationSettings.AppSettings.GetValues(code)[0].ToString());
+            //    }
+            //}
 
             //注册热键Ctrl+F12，这里的8879就是一个ID识别
             RegisterHotKey(this.Handle, 8879, 2, Keys.NumPad0);
@@ -98,10 +98,21 @@ namespace SmartStock
                 //Thread.Sleep(2000);
                 //this.Opacity = 15;
                 //记录当前日志
-                ConfigurationSettings.AppSettings.Set("current", a_strCode);
+                //记录程序当前目录
+                var cfa =
+                    ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.None);
+                cfa.AppSettings.Settings["current"].Value = a_strCode;
+                cfa.Save();
 
                 //保存后需要刷新数据
                 ConfigurationManager.RefreshSection("appSettings");
+
+
+                //string current = ConfigurationSettings.AppSettings.Get("current").ToString();
+                //Console.WriteLine(current);
+
+                //string appSetting = ConfigurationManager.AppSettings["current"];
+                //Console.WriteLine(appSetting);
             }
 
             Console.WriteLine(l_strResult);
@@ -147,7 +158,7 @@ namespace SmartStock
         protected override void WndProc(ref Message m)
         {
             //快捷键获取数据前先刷新数据
-            ConfigurationManager.RefreshSection("appSettings");
+            //ConfigurationManager.RefreshSection("appSettings");
 
             switch (m.Msg)
             {
@@ -195,10 +206,13 @@ namespace SmartStock
 
         private void timer1_Tick(object sender, EventArgs e)
         {
-            string current = ConfigurationSettings.AppSettings.GetValues("current")[0];
+            string current = ConfigurationManager.AppSettings["current"];
+
             GetInfo(current);
 
-            timer1.Interval = Int32.Parse(ConfigurationSettings.AppSettings.GetValues("timeInterval")[0].ToString()) * 1000;
+            timer1.Enabled = false;
+            timer1.Interval = Int32.Parse(ConfigurationManager.AppSettings["timeInterval"]) * 1000;
+            timer1.Enabled = true;
         }
     }
 }
