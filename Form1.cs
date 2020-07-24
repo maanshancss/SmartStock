@@ -52,6 +52,8 @@ namespace SmartStock
             RegisterHotKey(this.Handle, 8883, 2, Keys.NumPad4);
             RegisterHotKey(this.Handle, 8884, 2, Keys.NumPad5);
             RegisterHotKey(this.Handle, 8885, 2, Keys.NumPad6);
+
+            RegisterHotKey(this.Handle, 8888, 2, Keys.NumPad9);
             GetInfo(ConfigurationSettings.AppSettings.GetValues("code0")[0].ToString());
         }
 
@@ -129,6 +131,7 @@ namespace SmartStock
             UnregisterHotKey(this.Handle, 8883);
             UnregisterHotKey(this.Handle, 8884);
             UnregisterHotKey(this.Handle, 8885);
+            UnregisterHotKey(this.Handle, 8888);
         }
 
 
@@ -197,6 +200,10 @@ namespace SmartStock
                     {
                         // 执行button按钮
                         this.Close();
+                    }
+                    else if (m.WParam.ToString().Equals("8888")) //如果是注册的那个热键     
+                    {
+                        this.Visible = !this.Visible;
                     }
                     break;
             }
